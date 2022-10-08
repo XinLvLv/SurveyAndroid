@@ -2,48 +2,53 @@
   "questions": [
     {
       "id": "1",
-      "header": "Question 1",
-      "question": "What is your favorite ice cream flavor?",
-      "question_type": "single_select",
-      "options": [
-        "Strawberry",
-        "Chocolate",
-        "Vanilla",
-        {
-          "title": "Other flavor",
-          "type": "freeform"
-        },
-        {
-          "title": "Other dessert",
-          "type": "freeform"
-        }
+      "header": "Question 13",
+      "question": "How would you rate your stress",
+      "question_type": "segment_select",
+      "low_tag": "1. No Stress",
+      "high_tag": "7. Extreme Stress",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
       ]
     },
     {
       "id": "2",
-      "header": "Question 1.5",
-      "question": "Why strawberry?",
-      "question_type": "single_text_area",
-      "show_if": {
-        "id": "4",
-        "operation": "equals",
-        "value": "Strawberry"
-      }
+      "header": "Question 13",
+      "question": "How would you rate your mood",
+      "question_type": "segment_select",
+      "low_tag": "1. Very Sad",
+      "high_tag": "7. Very Happy",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
     },
     {
       "id": "3",
-      "header": "Question 2",
-      "question": "How would you describe your perfect day?",
-      "question_type": "single_text_area"
-    },
-    {
-      "id": "4",
-      "header": "Question 3",
-      "question": "Do you like to play sports?",
-      "question_type": "single_select",
-      "options": [
-        "Yes",
-        "No"
+      "header": "Question 13",
+      "question": "How many standard drinks of alcohol did you intake",
+      "question_type": "segment_select",
+      "low_tag": "",
+      "high_tag": "",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
       ]
     }
   ],
