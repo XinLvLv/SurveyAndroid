@@ -1,0 +1,28 @@
+{
+  "questions": [
+    {
+      "id": "1",
+      "header": "Question 1",
+      "question": "What is your favorite ice cream flavor?",
+      "question_type": "single_select",
+      "options": [
+        "Strawberry",
+        "Chocolate",
+        "Vanilla",
+        {
+          "title": "Other flavor",
+          "type": "freeform"
+        },
+        {
+          "title": "Other dessert",
+          "type": "freeform"
+        }
+      ]
+    }
+  ],
+  "submit": {
+    "button_title": "Submit Answers",
+    "url": "http://132.239.135.195:5000/androidquestionnaire"
+  },
+  "auto_focus_text": true
+}

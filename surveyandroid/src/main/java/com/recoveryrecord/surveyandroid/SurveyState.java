@@ -2,8 +2,10 @@ package com.recoveryrecord.surveyandroid;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.recoveryrecord.surveyandroid.condition.ConditionEvaluator;
 import com.recoveryrecord.surveyandroid.condition.CustomConditionHandler;
@@ -13,8 +15,11 @@ import com.recoveryrecord.surveyandroid.condition.OnQuestionSkipStatusChangedLis
 import com.recoveryrecord.surveyandroid.question.Question;
 import com.recoveryrecord.surveyandroid.question.QuestionsWrapper.SubmitData;
 import com.recoveryrecord.surveyandroid.validation.Validator;
+import org.json.*;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -195,12 +200,44 @@ public class SurveyState implements OnQuestionStateChangedListener, AnswerProvid
     @Override
     public String allAnswersJson() {
         ObjectNode topNode = getObjectMapper().createObjectNode();
-        ObjectNode answersNode = getObjectMapper().createObjectNode();
-        for (String questionId : mQuestionStateMap.keySet()) {
-            answersNode = putAnswer(answersNode, questionId, answerFor(questionId));
+
+//        ObjectNode answersNode = getObjectMapper().createObjectNode();
+//
+//        for (String questionId : mQuestionStateMap.keySet()) {
+//            answersNode = putAnswer(answersNode, questionId, answerFor(questionId));
+//        }
+//        topNode.set("answers", answersNode);
+
+//
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayNode arrayNode = mapper.createArrayNode();
+            for (String questionId : mQuestionStateMap.keySet()){
+                ObjectNode answers_id  = mapper.createObjectNode();
+                answers_id.put("question_id", questionId);
+//                answers_id.put("answer", answerFor(questionId).getValue());
+                answers_id.put("answer", answerFor(questionId).getValue());
+                arrayNode.add(answers_id);
         }
-        topNode.set("answers", answersNode);
+            String str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(arrayNode);
+            ObjectMapper obj = new ObjectMapper();
+            JsonNode node = obj.readTree(str);
+            topNode.set("q_a_pairs", node);
+
+            topNode.put("patiend_id", "9999");
+            Log.v("abcd", topNode.toString());
+
+            return topNode.toString();
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Log.v("aaa","aaaaaaaaa");
+        Log.v("test", topNode.toString());
         return topNode.toString();
+//        return "Error";
     }
 
     private ObjectMapper getObjectMapper() {

@@ -1,5 +1,6 @@
 package com.recoveryrecord.surveyandroid.viewholder;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -25,6 +26,7 @@ public class SubmitViewHolder extends RecyclerView.ViewHolder {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.v("Answer" , answerProvider.allAnswersJson());
                 submitSurveyHandler.submit(submitData.url, answerProvider.allAnswersJson());
             }
         });
