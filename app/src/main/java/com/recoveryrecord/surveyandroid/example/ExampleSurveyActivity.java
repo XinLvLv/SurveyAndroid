@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
 
+import org.json.*;
 
 public class ExampleSurveyActivity extends SurveyActivity implements CustomConditionHandler {
     private String questionnaire;
@@ -99,8 +100,9 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                     Request request = new Request.Builder().url(api).build();
                     try (Response response = okHttpClient.newCall(request).execute()) {
                         String responseBody = response.body().string();
-                        Log.v("getJsonFromInternet", responseBody);
+//                        Log.v("getJsonFromInternet", responseBody);
                         // ... do something with response
+                        translation(responseBody);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -112,4 +114,52 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         thread.start();
         return "ExampleQuestions.json";
     }
+    public void translation(String apiJson) throws JSONException {
+        JSONObject obj = new JSONObject(apiJson);
+        JSONArray questions = obj.getJSONArray("questions");
+//        Log.v("questions", questions.toString());
+        JSONObject after_translation = new JSONObject();
+        JSONArray after_translation_questions_array = new JSONArray();
+        for (int i = 0; i < questions.length(); i++)
+        {
+            JSONObject question_details = new JSONObject();
+
+            String question_id = questions.getJSONObject(i).getString("id");
+            String header = questions.getJSONObject(i).getString("brief");
+            String question = questions.getJSONObject(i).getString("text");
+            String question_type = "segment_select";
+            JSONArray selections = questions.getJSONObject(i).getJSONArray("selections");
+            String low_tag = selections.getJSONObject(0).getString("text");
+            String high_tag = selections.getJSONObject(selections.length()-1).getString("text");
+//            Log.v("question_id", question_id);
+//            Log.v("header", header);
+//            Log.v("question", question);
+//            Log.v("question_type", question_type);
+//            Log.v("low_tag", low_tag);
+//            Log.v("high_tag", high_tag);
+            JSONArray values = new JSONArray();
+            for (int j = 0; j < selections.length(); j++){
+                values.put(selections.getJSONObject(j).getString("backend_string"));
+            }
+//            Log.v("value",values.toString());
+            question_details.put("id", question_id);
+            question_details.put("header", header);
+            question_details.put("question", question);
+            question_details.put("question_type", question_type);
+            question_details.put("low_tag", low_tag);
+            question_details.put("high_tag", high_tag);
+            question_details.put("values", values);
+            after_translation_questions_array.put(question_details);
+        }
+        after_translation.put("questions", after_translation_questions_array);
+        JSONObject submit = new JSONObject();
+        submit.put("button_title", "Submit Answer");
+        submit.put("url", "http://132.239.135.195:5000/androidquestionnaire");
+        after_translation.put("submit", submit);
+        after_translation.put("auto_focus_text", true);
+        Log.v("translation", after_translation.toString());
+        
+    }
 }
+
+
