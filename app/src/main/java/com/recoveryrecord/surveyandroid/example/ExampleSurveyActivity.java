@@ -2,6 +2,7 @@ package com.recoveryrecord.surveyandroid.example;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -9,9 +10,14 @@ import com.recoveryrecord.surveyandroid.Answer;
 import com.recoveryrecord.surveyandroid.R;
 import com.recoveryrecord.surveyandroid.SurveyActivity;
 import com.recoveryrecord.surveyandroid.condition.CustomConditionHandler;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
+
 
 public class ExampleSurveyActivity extends SurveyActivity implements CustomConditionHandler {
     private String questionnaire;
@@ -83,6 +89,27 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         return questionnaire;
     }
     public String translateFromAPI(String api){
+        //avoid performing a networking operation on its main thread.
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try  {
+                    //Your code goes here
+                    OkHttpClient okHttpClient = new OkHttpClient();
+                    Request request = new Request.Builder().url(api).build();
+                    try (Response response = okHttpClient.newCall(request).execute()) {
+                        String responseBody = response.body().string();
+                        Log.v("getJsonFromInternet", responseBody);
+                        // ... do something with response
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
         return "ExampleQuestions.json";
     }
 }
