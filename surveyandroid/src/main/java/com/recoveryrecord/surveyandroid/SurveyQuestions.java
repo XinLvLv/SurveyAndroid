@@ -34,6 +34,7 @@ public class SurveyQuestions {
                 .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try {
+            Log.v("jsonfilename", jsonFileName);
             InputStream inputStream = assetManager.open(jsonFileName);
             QuestionsWrapper wrapper = mapper.readValue(inputStream, new TypeReference<QuestionsWrapper>(){});
             if (wrapper.questions != null) {

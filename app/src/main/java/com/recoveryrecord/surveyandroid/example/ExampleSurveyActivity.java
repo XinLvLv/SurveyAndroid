@@ -14,10 +14,12 @@ import java.util.Calendar;
 import java.util.Map;
 
 public class ExampleSurveyActivity extends SurveyActivity implements CustomConditionHandler {
-
+    private String questionnaire;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setQuestionnaire(translateFromAPI("http://132.239.135.195:5000/questionnaire/BP_Daily"));
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -27,7 +29,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
 
     @Override
     protected String getJsonFilename() {
-        return "ExampleQuestions.json";
+        return questionnaire;
     }
 
     @Override
@@ -73,5 +75,14 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                 }
             }).show();
         }
+    }
+    public void setQuestionnaire(String filename){
+        questionnaire = filename;
+    }
+    public String getQuestionnaire(){
+        return questionnaire;
+    }
+    public String translateFromAPI(String api){
+        return "ExampleQuestions.json";
     }
 }
