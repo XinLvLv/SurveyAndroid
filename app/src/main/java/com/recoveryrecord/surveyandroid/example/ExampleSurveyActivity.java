@@ -15,7 +15,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.*;
@@ -24,7 +26,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
     private String questionnaire;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setQuestionnaire(translateFromAPI("http://132.239.135.195:5000/questionnaire/BP_Daily"));
+        setQuestionnaire(translateFromAPI("http://132.239.135.195:5000/questionnaire/Weight"));
         super.onCreate(savedInstanceState);
 
     }
@@ -112,7 +114,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
             }
         });
         thread.start();
-        return "BP_Daily_translation.json";
+        return "weight_translation.json";
     }
     public void translation(String apiJson) throws JSONException {
         JSONObject obj = new JSONObject(apiJson);
@@ -120,8 +122,13 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
 //        Log.v("questions", questions.toString());
         JSONObject after_translation = new JSONObject();
         JSONArray after_translation_questions_array = new JSONArray();
+        // store the info of the hook question;
+
+        HashMap<String , HookQuestion> hook_questions = new HashMap<String, HookQuestion>();
+
         for (int i = 0; i < questions.length(); i++)
         {
+
             JSONObject question_details = new JSONObject();
 
             String question_id = questions.getJSONObject(i).getString("id");
@@ -145,20 +152,51 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                 question_details.put("low_tag", low_tag);
                 question_details.put("high_tag", high_tag);
                 question_details.put("values", values);
-                after_translation_questions_array.put(question_details);
+
             }
             if (type.equals("multipleChoice")){
                 String question_type = "single_select";
                 JSONArray selections = questions.getJSONObject(i).getJSONArray("selections");
                 JSONArray options = new JSONArray();
+
                 for (int j = 0; j < selections.length(); j++){
                     options.put(selections.getJSONObject(j).getString("text"));
+//                    Log.v("hook", selections.getJSONObject(j).getString("hook"));
+                    if (selections.getJSONObject(j).getString("hook").equals("null")){
+//                        Log.v("hook","equals to null");
+                    }
+                    else{
+                        HookQuestion hookQuestion = new HookQuestion();
+                        hookQuestion.setOn_hook_value(selections.getJSONObject(j).getString("text"));
+                        hookQuestion.setOn_hook_id(question_id);
+                        String hook_question_id = selections.getJSONObject(j).getString("hook");
+                        hook_questions.put(hook_question_id,hookQuestion);
+                    }
                 }
                 question_details.put("question_type", question_type);
                 question_details.put("options", options);
-                after_translation_questions_array.put(question_details);
-            }
 
+            }
+            if (type.equals("text")){
+                String question_type = "single_text_area";
+                question_details.put("question_type", question_type);
+            }
+            if (type.equals("numeric")){
+                question_details.put("question_type", "single_text_field");
+                question_details.put("input_type", "number");
+            }
+            Log.v("hook_questions", hook_questions.toString());
+            //hook questions
+            if (hook_questions.containsKey(question_id)){
+                HookQuestion hook_question = hook_questions.get(question_id);
+                JSONObject show_if = new JSONObject();
+                assert hook_question != null;
+                show_if.put("id",hook_question.getOn_hook_id());
+                show_if.put("operation","equals");
+                show_if.put("value", hook_question.getOn_hook_value());
+                question_details.put("show_if", show_if);
+            }
+            after_translation_questions_array.put(question_details);
 
         }
         after_translation.put("questions", after_translation_questions_array);
