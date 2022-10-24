@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.recoveryrecord.surveyandroid.question.Question;
 import com.recoveryrecord.surveyandroid.question.QuestionsWrapper;
 import com.recoveryrecord.surveyandroid.question.QuestionsWrapper.SubmitData;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,31 +25,47 @@ public class SurveyQuestions {
     private ArrayList<Question> mQuestions;
     private SubmitData mSubmitData;
 
-    public static SurveyQuestions load(Context context, String jsonFileName) {
-        return createSurveyQuestionsFromFile(context, jsonFileName);
+//    public static SurveyQuestions load(Context context, String jsonFileName) {
+//        return createSurveyQuestionsFromFile(context, jsonFileName);
+//    }
+    public static SurveyQuestions load(Context context, JSONObject questionnaire) throws JsonProcessingException {
+        return createSurveyQuestionsFromJsonObject(context, questionnaire);
     }
 
-    public static SurveyQuestions createSurveyQuestionsFromFile(Context context, String jsonFileName) {
+    public static SurveyQuestions createSurveyQuestionsFromJsonObject(Context context, JSONObject questions_json) throws JsonProcessingException {
         ArrayList<Question> questions = new ArrayList<>();
         SubmitData submitData = null;
-        AssetManager assetManager = context.getAssets();
         ObjectMapper mapper = new ObjectMapper()
                 .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        try {
-            Log.v("jsonfilename", jsonFileName);
-            InputStream inputStream = assetManager.open(jsonFileName);
-            QuestionsWrapper wrapper = mapper.readValue(inputStream, new TypeReference<QuestionsWrapper>(){});
+        QuestionsWrapper wrapper = mapper.readValue(questions_json.toString(), new TypeReference<QuestionsWrapper>(){});
             if (wrapper.questions != null) {
                 questions = wrapper.questions;
             }
             submitData = wrapper.submit;
-            inputStream.close();
-        } catch (IOException ioe) {
-            Log.e(TAG, "Error while parsing " + jsonFileName, ioe);
-        }
         return new SurveyQuestions(context, questions, submitData);
     }
+//    public static SurveyQuestions createSurveyQuestionsFromFile(Context context, String jsonFileName) {
+//        ArrayList<Question> questions = new ArrayList<>();
+//        SubmitData submitData = null;
+//        AssetManager assetManager = context.getAssets();
+//        ObjectMapper mapper = new ObjectMapper()
+//                .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+//                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//        try {
+//            Log.v("jsonfilename", jsonFileName);
+//            InputStream inputStream = assetManager.open(jsonFileName);
+//            QuestionsWrapper wrapper = mapper.readValue(inputStream, new TypeReference<QuestionsWrapper>(){});
+//            if (wrapper.questions != null) {
+//                questions = wrapper.questions;
+//            }
+//            submitData = wrapper.submit;
+//            inputStream.close();
+//        } catch (IOException ioe) {
+//            Log.e(TAG, "Error while parsing " + jsonFileName, ioe);
+//        }
+//        return new SurveyQuestions(context, questions, submitData);
+//    }
 
     public static SurveyQuestions createSurveyQuestionsFromJsonString(Context context, String jsonString) {
         ArrayList<Question> questions = new ArrayList<>();

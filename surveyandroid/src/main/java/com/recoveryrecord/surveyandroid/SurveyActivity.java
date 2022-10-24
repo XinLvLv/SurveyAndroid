@@ -11,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.recoveryrecord.surveyandroid.condition.CustomConditionHandler;
 import com.recoveryrecord.surveyandroid.validation.DefaultValidator;
 import com.recoveryrecord.surveyandroid.validation.FailedValidationListener;
 import com.recoveryrecord.surveyandroid.validation.Validator;
+
+import org.json.JSONObject;
 
 public abstract class SurveyActivity extends AppCompatActivity implements FailedValidationListener {
     private static final String TAG = SurveyActivity.class.getSimpleName();
@@ -25,6 +28,14 @@ public abstract class SurveyActivity extends AppCompatActivity implements Failed
     private SurveyState mState;
     private OnSurveyStateChangedListener mOnSurveyStateChangedListener;
     private RecyclerView mRecyclerView;
+    private JSONObject questions;
+
+    public void setQuestions(JSONObject questions) {
+        this.questions = questions;
+    }
+    public JSONObject getQuestions(){
+        return questions;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +43,12 @@ public abstract class SurveyActivity extends AppCompatActivity implements Failed
         setContentView(getLayoutResId());
         setTitle(getSurveyTitle());
 
-        SurveyQuestions surveyQuestions = createSurveyQuestions();
+        SurveyQuestions surveyQuestions = null;
+        try {
+            surveyQuestions = createSurveyQuestions();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         Log.d(TAG, "Questions = " + surveyQuestions);
 
         mState = createSurveyState(surveyQuestions);
@@ -43,8 +59,12 @@ public abstract class SurveyActivity extends AppCompatActivity implements Failed
         return R.layout.activity_survey;
     }
 
-    protected SurveyQuestions createSurveyQuestions() {
-        return SurveyQuestions.load(this, getJsonFilename());
+//    protected SurveyQuestions createSurveyQuestions() {
+//        return SurveyQuestions.load(this, getJsonFilename());
+//    }
+    protected SurveyQuestions createSurveyQuestions() throws JsonProcessingException {
+        Log.v("questions success",getQuestions().toString());
+        return SurveyQuestions.load(this, getQuestions());
     }
 
     protected void setupRecyclerView() {

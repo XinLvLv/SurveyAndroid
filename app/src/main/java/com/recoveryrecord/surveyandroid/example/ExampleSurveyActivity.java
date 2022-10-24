@@ -15,7 +15,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +22,27 @@ import java.util.Map;
 import org.json.*;
 
 public class ExampleSurveyActivity extends SurveyActivity implements CustomConditionHandler {
-    private String questionnaire;
+//    private String questionnaire;
+
+    private volatile JSONObject q_json;
+
+    public void setQ_json(JSONObject q_json) {
+        this.q_json = q_json;
+    }
+    public JSONObject getQ_json(){
+        return this.q_json;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setQuestionnaire(translateFromAPI("http://132.239.135.195:5000/questionnaire/Weight"));
+        try {
+            translateFromAPI("http://132.239.135.195:5000/questionnaire/BP_Daily");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.v("json object bbbbbb", q_json.toString());
+        this.setQuestions(q_json);
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -36,10 +50,10 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         return getString(R.string.example_survey);
     }
 
-    @Override
-    protected String getJsonFilename() {
-        return questionnaire;
-    }
+//    @Override
+//    protected String getJsonFilename() {
+//        return questionnaire;
+//    }
 
     @Override
     protected CustomConditionHandler getCustomConditionHandler() {
@@ -85,14 +99,15 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
             }).show();
         }
     }
-    public void setQuestionnaire(String filename){
-        questionnaire = filename;
-    }
-    public String getQuestionnaire(){
-        return questionnaire;
-    }
-    public String translateFromAPI(String api){
+//    public void setQuestionnaire(String filename){
+//        questionnaire = filename;
+//    }
+//    public String getQuestionnaire(){
+//        return questionnaire;
+//    }
+    public void translateFromAPI(String api) throws InterruptedException {
         //avoid performing a networking operation on its main thread.
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -104,7 +119,9 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                         String responseBody = response.body().string();
 //                        Log.v("getJsonFromInternet", responseBody);
                         // ... do something with response
-                        translation(responseBody);
+                        setQ_json(translation(responseBody)); ;
+//                        Log.v("return json", questions.toString());
+                        Log.v("json object aaaaaaaa", getQ_json().toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -114,9 +131,9 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
             }
         });
         thread.start();
-        return "weight_translation.json";
+        thread.join();
     }
-    public void translation(String apiJson) throws JSONException {
+    public JSONObject translation(String apiJson) throws JSONException {
         JSONObject obj = new JSONObject(apiJson);
         JSONArray questions = obj.getJSONArray("questions");
 //        Log.v("questions", questions.toString());
@@ -185,7 +202,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                 question_details.put("question_type", "single_text_field");
                 question_details.put("input_type", "number");
             }
-            Log.v("hook_questions", hook_questions.toString());
+//            Log.v("hook_questions", hook_questions.toString());
             //hook questions
             if (hook_questions.containsKey(question_id)){
                 HookQuestion hook_question = hook_questions.get(question_id);
@@ -205,8 +222,8 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         submit.put("url", "http://132.239.135.195:5000/androidquestionnaire");
         after_translation.put("submit", submit);
         after_translation.put("auto_focus_text", true);
-        Log.v("translation", after_translation.toString());
-        
+//        Log.v("translation", after_translation.toString());
+        return after_translation;
     }
 }
 
