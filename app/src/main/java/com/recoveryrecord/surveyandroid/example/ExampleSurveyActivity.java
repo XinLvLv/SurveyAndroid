@@ -24,8 +24,7 @@ import org.json.*;
 public class ExampleSurveyActivity extends SurveyActivity implements CustomConditionHandler {
 //    private String questionnaire;
 
-    private volatile JSONObject q_json;
-
+    private JSONObject q_json;
     public void setQ_json(JSONObject q_json) {
         this.q_json = q_json;
     }
@@ -36,7 +35,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
-            translateFromAPI("http://132.239.135.195:5000/questionnaire/BP_Daily");
+            translateFromAPI("http://132.239.135.195:5000/questionnaire/Recommendation_Check_In");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
