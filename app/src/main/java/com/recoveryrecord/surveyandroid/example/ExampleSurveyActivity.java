@@ -25,6 +25,8 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
 //    private String questionnaire;
 
     private JSONObject q_json;
+    private JSONObject original_q_json;
+
     public void setQ_json(JSONObject q_json) {
         this.q_json = q_json;
     }
@@ -32,6 +34,12 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         return this.q_json;
     }
 
+    public void setOriginal_q_json(JSONObject original_q_json){
+        this.original_q_json = original_q_json;
+    }
+    public JSONObject getOriginal_q_json(){
+        return this.original_q_json;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -41,6 +49,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         }
         Log.v("json object bbbbbb", q_json.toString());
         this.setQuestions(q_json);
+        this.setOriginal_questions(original_q_json);
         super.onCreate(savedInstanceState);
     }
 
@@ -118,6 +127,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                         String responseBody = response.body().string();
 //                        Log.v("getJsonFromInternet", responseBody);
                         // ... do something with response
+                        setOriginal_q_json(new JSONObject(responseBody));
                         setQ_json(translation(responseBody)); ;
 //                        Log.v("return json", questions.toString());
                         Log.v("json object aaaaaaaa", getQ_json().toString());

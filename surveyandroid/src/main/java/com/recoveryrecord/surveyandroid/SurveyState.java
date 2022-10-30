@@ -44,6 +44,15 @@ public class SurveyState implements OnQuestionStateChangedListener, AnswerProvid
 
     private ObjectMapper mObjectMapper;
 
+    // field used to store the original questions
+    private JSONObject original_questions;
+    public SurveyState setOriginal_question(JSONObject questions){
+        original_questions = questions;
+        return this;
+    }
+    protected JSONObject getOriginal_questions(){
+        return original_questions;
+    }
     public SurveyState(SurveyQuestions surveyQuestions) {
         mSurveyQuestions = surveyQuestions;
         mQuestionStateMap = new HashMap<>();
@@ -215,8 +224,8 @@ public class SurveyState implements OnQuestionStateChangedListener, AnswerProvid
             for (String questionId : mQuestionStateMap.keySet()){
                 ObjectNode answers_id  = mapper.createObjectNode();
                 answers_id.put("question_id", questionId);
-//                answers_id.put("answer", answerFor(questionId).getValue());
-                answers_id.put("answer", answerFor(questionId).getValue());
+                String answer = get_back_end_string(answerFor(questionId).getValue(), questionId);
+                answers_id.put("answer", answer);
                 arrayNode.add(answers_id);
         }
             String str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(arrayNode);
@@ -328,5 +337,30 @@ public class SurveyState implements OnQuestionStateChangedListener, AnswerProvid
         for (OnSurveyStateChangedListener listener : mSurveyStateListeners) {
             listener.submitButtonInserted(adapterPosition);
         }
+    }
+    public String get_back_end_string(String current_answer, String id) throws JSONException {
+        JSONArray questions = original_questions.getJSONArray("questions");
+        JSONObject question = questions.getJSONObject(Integer.parseInt(id));
+        if (question.getString("type_string").equals("text")){
+            return current_answer;
+        }
+        else{
+            JSONArray selections = question.getJSONArray("selections");
+            for (int j = 0; j < selections.length(); j++){
+                if (selections.getJSONObject(j).getString("text").equals(current_answer)){
+                    String backend_string = selections.getJSONObject(j).getString("backend_string");
+                    Log.v("backend_string",backend_string);
+                    if (backend_string.equals("null")){
+                        return current_answer;
+                    }
+                    else{
+                        return backend_string;}
+                }
+                if (selections.getJSONObject(j).getString("backend_string").equals(current_answer)){
+                    return current_answer;
+                }
+            }
+        }
+        return "error";
     }
 }

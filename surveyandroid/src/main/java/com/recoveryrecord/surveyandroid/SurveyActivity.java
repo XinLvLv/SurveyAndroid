@@ -29,12 +29,17 @@ public abstract class SurveyActivity extends AppCompatActivity implements Failed
     private OnSurveyStateChangedListener mOnSurveyStateChangedListener;
     private RecyclerView mRecyclerView;
     private JSONObject questions;
+    private JSONObject original_questions;
 
     public void setQuestions(JSONObject questions) {
         this.questions = questions;
     }
     public JSONObject getQuestions(){
         return questions;
+    }
+    public void setOriginal_questions(JSONObject original_questions){this.original_questions = original_questions;}
+    public JSONObject getOriginal_questions(){
+        return getQuestions();
     }
 
     @Override
@@ -80,6 +85,7 @@ public abstract class SurveyActivity extends AppCompatActivity implements Failed
                 .setValidator(getValidator())
                 .setCustomConditionHandler(getCustomConditionHandler())
                 .setSubmitSurveyHandler(getSubmitSurveyHandler())
+                .setOriginal_question(original_questions)
                 .initFilter();
     }
 
