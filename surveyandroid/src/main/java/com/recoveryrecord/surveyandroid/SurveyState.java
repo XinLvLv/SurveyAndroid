@@ -341,7 +341,8 @@ public class SurveyState implements OnQuestionStateChangedListener, AnswerProvid
     public String get_back_end_string(String current_answer, String id) throws JSONException {
         JSONArray questions = original_questions.getJSONArray("questions");
         JSONObject question = questions.getJSONObject(Integer.parseInt(id));
-        if (question.getString("type_string").equals("text")){
+        Log.v("typeeeee", question.getString("type_string"));
+        if (question.getString("type_string").equals("text") || question.getString("type_string").equals("numeric")){
             return current_answer;
         }
         else{
