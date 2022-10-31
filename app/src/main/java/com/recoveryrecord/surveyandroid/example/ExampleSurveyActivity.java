@@ -249,7 +249,6 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                 Log.v("iddddddddd11111111111", hook_question.getOn_hook_value());
                 Log.v("iddddddddd2222222222", hook_question.getSecond_hook_value());
 
-                assert hook_question != null;
                 if (first_finish){
 //                    Log.v("second hook", "second hookkkkkkkkkkkkkkkkk");
                     JSONObject show_if_2 = new JSONObject();
@@ -257,6 +256,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                     show_if_2.put("operation","equals");
                     show_if_2.put("value", hook_question.getSecond_hook_value());
                     question_details.put("show_if", show_if_2);
+                    first_finish = false;
                 }
                 else{
                     JSONObject show_if_1 = new JSONObject();
