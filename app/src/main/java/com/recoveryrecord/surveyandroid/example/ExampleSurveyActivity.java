@@ -251,26 +251,27 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
 
                 if (first_finish){
 //                    Log.v("second hook", "second hookkkkkkkkkkkkkkkkk");
-                    JSONObject show_if_2 = new JSONObject();
-                    show_if_2.put("id",hook_question.getOn_hook_id());
-                    show_if_2.put("operation","equals");
-                    show_if_2.put("value", hook_question.getSecond_hook_value());
-                    question_details.put("show_if", show_if_2);
-                    first_finish = false;
+//                    JSONObject show_if_2 = new JSONObject();
+//                    show_if_2.put("id",hook_question.getOn_hook_id());
+//                    show_if_2.put("operation","equals");
+//                    show_if_2.put("value", hook_question.getSecond_hook_value());
+//                    question_details.put("show_if", show_if_2);
+//                    first_finish = false;
                 }
                 else{
                     JSONObject show_if_1 = new JSONObject();
-                    show_if_1.put("id",hook_question.getOn_hook_id());
-                    show_if_1.put("operation","equals");
-                    show_if_1.put("value", hook_question.getOn_hook_value());
-                    question_details.put("show_if", show_if_1);
-
                     String second_value = hook_question.getSecond_hook_value();
                     if (second_value.equals("null")){
+                        show_if_1.put("id",hook_question.getOn_hook_id());
+                        show_if_1.put("operation","equals");
+                        show_if_1.put("value", hook_question.getOn_hook_value());
+                        question_details.put("show_if", show_if_1);
                     }
                     else{
-                        i--;
-                        first_finish = true;
+                        show_if_1.put("id",hook_question.getOn_hook_id());
+                        show_if_1.put("operation","greater than or equal to");
+                        show_if_1.put("value", hook_question.getOn_hook_value());
+                        question_details.put("show_if", show_if_1);
                     }
                 }
             }
