@@ -40,6 +40,7 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
     public JSONObject getOriginal_q_json(){
         return this.original_q_json;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -151,10 +152,9 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
         // store the info of the hook question;
 
         HashMap<String , HookQuestion> hook_questions = new HashMap<String, HookQuestion>();
-
+        boolean first_finish = false;
         for (int i = 0; i < questions.length(); i++)
         {
-
             JSONObject question_details = new JSONObject();
 
             String question_id = questions.getJSONObject(i).getString("id");
@@ -172,8 +172,37 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
                 String high_tag = selections.getJSONObject(selections.length()-1).getString("text");
                 JSONArray values = new JSONArray();
                 for (int j = 0; j < selections.length(); j++){
+                    Log.v("hook questions", hook_questions.toString());
                     values.put(selections.getJSONObject(j).getString("backend_string"));
+                    if (selections.getJSONObject(j).getString("hook").equals("null")){
+//                        Log.v("hook","equals to null");
+                    }
+                    else{
+                        String hook_question_id = selections.getJSONObject(j).getString("hook");
+                        if (hook_questions.containsKey(hook_question_id)){
+                            HookQuestion hook_question = hook_questions.get(hook_question_id);
+                            assert hook_question != null;
+                            hook_question.setSecond_hook_value(selections.getJSONObject(j).getString("backend_string"));
+
+                            Log.v("hook questionnnnnn", "Second");
+                            Log.v("hook questionnnnnn", hook_question.getOn_hook_value());
+                            Log.v("hook questionnnnnn", hook_question.getSecond_hook_value());
+                            hook_questions.put(hook_question_id,hook_question);
+                        }
+                        else{
+                            HookQuestion hookQuestion = new HookQuestion();
+                            hookQuestion.setOn_hook_value(selections.getJSONObject(j).getString("backend_string"));
+                            hookQuestion.setOn_hook_id(question_id);
+
+                            Log.v("hook questionnnnnn", "First");
+                            Log.v("hook questionnnnnn", hookQuestion.getOn_hook_value());
+                            Log.v("hook questionnnnnn", hookQuestion.getSecond_hook_value());
+                            hook_questions.put(hook_question_id,hookQuestion);
+                        }
+
+                    }
                 }
+
                 question_details.put("question_type", question_type);
                 question_details.put("low_tag", low_tag);
                 question_details.put("high_tag", high_tag);
@@ -213,17 +242,42 @@ public class ExampleSurveyActivity extends SurveyActivity implements CustomCondi
             }
 //            Log.v("hook_questions", hook_questions.toString());
             //hook questions
+            Log.v("hook questions", hook_questions.toString());
+
             if (hook_questions.containsKey(question_id)){
                 HookQuestion hook_question = hook_questions.get(question_id);
-                JSONObject show_if = new JSONObject();
-                assert hook_question != null;
-                show_if.put("id",hook_question.getOn_hook_id());
-                show_if.put("operation","equals");
-                show_if.put("value", hook_question.getOn_hook_value());
-                question_details.put("show_if", show_if);
-            }
-            after_translation_questions_array.put(question_details);
+                Log.v("iddddddddd11111111111", hook_question.getOn_hook_value());
+                Log.v("iddddddddd2222222222", hook_question.getSecond_hook_value());
 
+                assert hook_question != null;
+                if (first_finish){
+//                    Log.v("second hook", "second hookkkkkkkkkkkkkkkkk");
+                    JSONObject show_if_2 = new JSONObject();
+                    show_if_2.put("id",hook_question.getOn_hook_id());
+                    show_if_2.put("operation","equals");
+                    show_if_2.put("value", hook_question.getSecond_hook_value());
+                    question_details.put("show_if", show_if_2);
+                }
+                else{
+                    JSONObject show_if_1 = new JSONObject();
+                    show_if_1.put("id",hook_question.getOn_hook_id());
+                    show_if_1.put("operation","equals");
+                    show_if_1.put("value", hook_question.getOn_hook_value());
+                    question_details.put("show_if", show_if_1);
+
+                    String second_value = hook_question.getSecond_hook_value();
+                    if (second_value.equals("null")){
+                    }
+                    else{
+                        i--;
+                        first_finish = true;
+                    }
+                }
+            }
+
+            after_translation_questions_array.put(question_details);
+            Log.v("iiiiiiiiiiiii", String.valueOf(i));
+            Log.v("checkkkkkkkkkkkkk", after_translation_questions_array.toString());
         }
         after_translation.put("questions", after_translation_questions_array);
         JSONObject submit = new JSONObject();
