@@ -1,0 +1,55 @@
+{
+  "questions": [
+    {
+      "id": "1",
+      "header": "Question 1",
+      "question": "What is your favorite ice cream flavor?",
+      "question_type": "single_select",
+      "options": [
+        "Strawberry",
+        "Chocolate",
+        "Vanilla",
+        {
+          "title": "Other flavor",
+          "type": "freeform"
+        },
+        {
+          "title": "Other dessert",
+          "type": "freeform"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "header": "Question 1.5",
+      "question": "Why strawberry?",
+      "question_type": "single_text_area",
+      "show_if": {
+        "id": "4",
+        "operation": "equals",
+        "value": "Strawberry"
+      }
+    },
+    {
+      "id": "3",
+      "header": "Question 2",
+      "question": "How would you describe your perfect day?",
+      "question_type": "single_text_area"
+    },
+    {
+      "id": "4",
+      "header": "Question 3",
+      "question": "Do you like to play sports?",
+      "question_type": "single_select",
+      "options": [
+        "Yes",
+        "No"
+      ]
+    }
+  ],
+  "submit": {
+    "button_title": "Submit Answers",
+    "url": "http://132.239.135.195:5000/androidquestionnaire"
+  },
+  "auto_focus_text": true
+}
