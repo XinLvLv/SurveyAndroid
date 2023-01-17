@@ -1,51 +1,20 @@
 {
   "questions": [
     {
-      "id": "1",
-      "header": "Question 1",
-      "question": "What is your favorite ice cream flavor?",
-      "question_type": "single_select",
+      "id": "music_types",
+      "header": "Question 9",
+      "question": "What types of music do you like?",
+      "question_type": "multi_select",
       "options": [
-        "Strawberry",
-        "Chocolate",
-        "Vanilla",
+        "Pop",
+        "Rock",
+        "Rap",
+        "Country",
         {
-          "title": "Other flavor",
+          "title": "Other",
           "type": "freeform"
-        },
-        {
-          "title": "Other dessert",
-          "type": "freeform"
+        }]
         }
-      ]
-    },
-    {
-      "id": "2",
-      "header": "Question 1.5",
-      "question": "Why strawberry?",
-      "question_type": "single_text_area",
-      "show_if": {
-        "id": "4",
-        "operation": "equals",
-        "value": "Strawberry"
-      }
-    },
-    {
-      "id": "3",
-      "header": "Question 2",
-      "question": "How would you describe your perfect day?",
-      "question_type": "single_text_area"
-    },
-    {
-      "id": "4",
-      "header": "Question 3",
-      "question": "Do you like to play sports?",
-      "question_type": "single_select",
-      "options": [
-        "Yes",
-        "No"
-      ]
-    }
   ],
   "submit": {
     "button_title": "Submit Answers",
